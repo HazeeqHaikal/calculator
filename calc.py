@@ -34,7 +34,7 @@ class Calculator:
             0: (4, 2), ".": (4, 1)
         }
         self.operators = {
-            "/": "\u00F7", "*": "\u00D7", "-": "-", "+": "+"
+            "\u00F7": "\u00F7", "\u00D7": "\u00D7", "-": "-", "+": "+"
         }
         self.buttons_frame = self.create_buttons_frame()
 
@@ -82,7 +82,7 @@ class Calculator:
     def append_operator(self, operator):
         self.current_expression += operator
         self.total_expression += self.current_expression
-        self.current_expression = ''
+        self.current_expression = ""
         self.update_total_label()
         self.update_label()
 
@@ -90,7 +90,7 @@ class Calculator:
         i = 0
         for operator, symbol in self.operators.items():
             button = tk.Button(self.buttons_frame, text=symbol, bg=OFF_WHITE, fg=LABEL_COLOR,
-                               font=DEFAULT_FONT_STYLE, borderwidth=0, command=lambda x=operator: self.append_operator(x))
+                            font=DEFAULT_FONT_STYLE, borderwidth=0, command=lambda x=operator: self.append_operator(x))
             button.grid(row=i, column=4, sticky=tk.NSEW)
             i += 1
 
@@ -109,7 +109,7 @@ class Calculator:
         self.total_expression += self.current_expression
         self.update_total_label()
 
-        self.current_expression = str(eval(self.total_expression))
+        self.current_expression = str(eval(self.total_expression.replace("\u00D7", "*").replace("\u00F7", "/")))
         
         self.total_expression = ""
         self.update_label()
@@ -128,7 +128,7 @@ class Calculator:
         self.total_label.config(text=self.total_expression)
 
     def update_label(self):
-        self.label.config(text=self.current_expression)
+        self.label.config(text=self.current_expression[:11])
 
     def run(self):
         self.window.mainloop()
