@@ -95,7 +95,6 @@ class Calculator:
         else:
             self.current_expression = self.current_expression.lstrip("0")
             self.current_expression += str(value)
-            # print("haha")
         self.update_label()
 
     def create_digit_buttons(self):
@@ -154,10 +153,7 @@ class Calculator:
         button.grid(row=0, column=3, sticky=tk.NSEW)
 
     def evaluate(self):
-        # if self.current_expression.startswith(""): self.current_expression = "0"
         self.total_expression += self.current_expression
-        # if len(self.total_expression) < 1 and self.total_expression.strip().startswith("0"):
-        #      print("woi1")
         self.update_total_label()
 
         try:
