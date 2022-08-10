@@ -15,6 +15,7 @@ DEFAULT_FONT_STYLE = ("Arial", 20)
 OFF_WHITE = "#F8FAFF"
 LIGHT_BLUE = "#CCEDFF"
 
+
 class Calculator:
     def __init__(self):
         self.window = tk.Tk()
@@ -50,8 +51,9 @@ class Calculator:
         self.create_operator_buttons()
         self.create_special_buttons()
         self.bind_keys()
-
+        
     def bind_keys(self):
+        
         self.window.bind("<Return>", lambda event:self.evaluate())
         self.window.bind("<Delete>", lambda event:self.clear())
         self.window.bind("<BackSpace>", lambda event:self.backspace())
@@ -111,13 +113,14 @@ class Calculator:
             self.current_expression = self.current_expression.lstrip("0")
             self.current_expression += str(value)
         self.update_label()
-
-    def create_digit_buttons(self):
+        
+    def create_digit_buttons(self):        
         for digit, grid_value in self.digits.items():
             button = tk.Button(self.buttons_frame, text=str(digit), bg=WHITE, fg=LABEL_COLOR,
                                font=DIGITS_FONT_STYLE, borderwidth=0, command=lambda x=digit: self.add_to_expression(x))
+                        
             button.grid(row=grid_value[0],column=grid_value[1], sticky=tk.NSEW)
-
+            
     def append_operator(self, operator):
         if(str(self.current_expression) == "0"): 
             self.current_expression = "0"
@@ -220,7 +223,21 @@ class Calculator:
         
     # def update_button(self):
     #     self.label.config
-        
+    
+    # def select_button(widget):
+    #     global previously_clicked
+
+    #     if previously_clicked:
+    #         previously_clicked['bg'] = widget['bg']
+    #         previously_clicked['activebackground'] = widget['activebackground']
+    #         previously_clicked['relief'] = widget['relief']
+
+    #     widget['bg'] = OFF_WHITE
+    #     widget['activebackground'] = LIGHT_GRAY
+    #     widget['relief'] = 'sunken'
+
+    #     previously_clicked = widget
+    
     def run(self):
         self.window.mainloop()
 
