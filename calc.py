@@ -1,5 +1,9 @@
+from ast import arguments
 import tkinter as tk
 import math
+from fractions import Fraction as frac
+import locale
+locale.setlocale(locale.LC_ALL, '')
 
 LARGE_FONT_STYLE = ("Arial", 40, "bold")
 SMALL_FONT_STYLE = ("Arial", 16)
@@ -38,6 +42,7 @@ class Calculator:
         self.buttons_frame.rowconfigure(0, weight=1)
 
         for x in range(1, 5):
+            # if(x < 5):
             self.buttons_frame.rowconfigure(x, weight=1)
             self.buttons_frame.columnconfigure(x, weight=1)
 
@@ -50,12 +55,19 @@ class Calculator:
         self.window.bind("<Return>", lambda event:self.evaluate())
         self.window.bind("<Delete>", lambda event:self.clear())
         self.window.bind("<BackSpace>", lambda event:self.backspace())
-        count = 0
+        # self.window.bind("<Delete>", lambda event:self.delete())
         for key in  self.digits:
             self.window.bind(str(key), lambda event, digit = key: self.add_to_expression(digit))
         
         for key in self.operators:
             self.window.bind(key, lambda event, operator=key:self.append_operator(operator))
+    
+    def delete(self):
+        if(len(self.current_expression.strip()) > 1): 
+            self.current_expression = self.current_expression.strip()[1:]
+        else:
+            self.current_expression = str("0")
+        self.update_label()
     
     def backspace(self):
         if(len(self.current_expression.strip()) > 1): 
@@ -69,6 +81,7 @@ class Calculator:
         self.create_equals_button()
         self.create_square_button()
         self.create_square_root_button()
+        # self.create_fraction_button()
 
     
     def create_display_labels(self):
@@ -90,6 +103,8 @@ class Calculator:
     def add_to_expression(self, value):
         if(self.current_expression.strip().startswith("0") and str(value) == "0"):
             self.current_expression = str(value)
+        elif(self.current_expression.count(".") > 0 and str(value) == "."):
+            return
         elif(self.current_expression == "Math Error"): 
             self.current_expression = str(value)
         else:
@@ -101,13 +116,16 @@ class Calculator:
         for digit, grid_value in self.digits.items():
             button = tk.Button(self.buttons_frame, text=str(digit), bg=WHITE, fg=LABEL_COLOR,
                                font=DIGITS_FONT_STYLE, borderwidth=0, command=lambda x=digit: self.add_to_expression(x))
-            button.grid(row=grid_value[0],
-                        column=grid_value[1], sticky=tk.NSEW)
+            button.grid(row=grid_value[0],column=grid_value[1], sticky=tk.NSEW)
 
     def append_operator(self, operator):
         if(str(self.current_expression) == "0"): 
             self.current_expression = "0"
         self.current_expression += " " + operator + " "
+        arguments = self.current_expression.split(" ")
+        if(arguments[0] == "" and arguments[2] == ""): 
+            self.current_expression = ""
+            return
         self.total_expression += self.current_expression
         self.current_expression = ""
         self.update_total_label()
@@ -118,7 +136,10 @@ class Calculator:
         for operator, symbol in self.operators.items():
             button = tk.Button(self.buttons_frame, text=symbol, bg=OFF_WHITE, fg=LABEL_COLOR,
                             font=DEFAULT_FONT_STYLE, borderwidth=0, command=lambda x=operator: self.append_operator(x))
-            button.grid(row=i, column=4, sticky=tk.NSEW)
+            # if(i == 0):
+            button.grid(row=i, column=4, columnspan=1, sticky=tk.NSEW)
+            # else:
+                # button.grid(row=i, column=4, columnspan=2, sticky=tk.NSEW)
             i += 1
 
     def clear(self):
@@ -131,9 +152,19 @@ class Calculator:
         button = tk.Button(self.buttons_frame, text="C", bg=OFF_WHITE, fg=LABEL_COLOR,
                            font=DEFAULT_FONT_STYLE, borderwidth=0, command=lambda: self.clear())
         button.grid(row=0, column=1, sticky=tk.NSEW)
+    
+    def fraction(self):
+        if(self.current_expression == ""): self.total_expression = "0"
+        self.current_expression = str(eval(f"frac( {self.current_expression} )"))
+        self.update_label()
+    
+    def create_fraction_button(self):
+        button = tk.Button(self.buttons_frame, text="a/b", bg=OFF_WHITE, fg=LABEL_COLOR,
+                           font=("Arial", 16), borderwidth=0, command=lambda: self.fraction())
+        button.grid(row=0, column=5, columnspan=1, sticky=tk.NSEW)
         
     def square(self):
-        if(self.current_expression == ""): self.current_expression = "0"
+        if(self.current_expression == ""): self.total_expression = "0"
         self.current_expression = str(eval(f"{self.current_expression} ** 2"))
         self.update_label()
         
@@ -143,8 +174,10 @@ class Calculator:
         button.grid(row=0, column=2, sticky=tk.NSEW)
         
     def square_root(self):
-        if(self.current_expression == ""): self.current_expression = "0"
-        self.current_expression = str(eval(f"math.sqrt( {self.current_expression} )"))
+        if(str(self.current_expression) == "0"): 
+            self.current_expression = "0"
+        else:
+            self.current_expression = str(eval(f"math.sqrt( {self.current_expression} )"))
         self.update_label()
         
     def create_square_root_button(self):
@@ -176,17 +209,22 @@ class Calculator:
 
     def update_total_label(self):
         expression = self.total_expression
+        if expression == "Math Error": expression = "" 
         for operator, symbol in self.operators.items():
             expression = expression.replace(operator, f'{symbol}')
         self.total_label.config(text=expression)
 
     def update_label(self):
+        # self.label.config(text=locale.format_string("%d",  int(self.current_expression[:11]), grouping=True))
         self.label.config(text=self.current_expression[:11])
+        
+    # def update_button(self):
+    #     self.label.config
         
     def run(self):
         self.window.mainloop()
 
-
+    
 if __name__ == '__main__':
     calc = Calculator()
     calc.run()
