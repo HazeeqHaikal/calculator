@@ -50,8 +50,9 @@ class Calculator:
     
     # global key_release
     def key_release(self, event):
-        if event.keysym in keys:
-            print("lmao")
+        if event.keysym =="Return" :
+            keys["Return"].config(bg=LIGHT_BLUE)
+        elif event.keysym in keys:
             keys[event.keysym].config(bg=WHITE)
                 
     # global key_press
@@ -217,7 +218,7 @@ class Calculator:
         button = tk.Button(self.buttons_frame, text="=", bg=LIGHT_BLUE,
                            fg=LABEL_COLOR, font=DEFAULT_FONT_STYLE, borderwidth=0, command=self.evaluate)
         button.grid(row=4, column=3, columnspan=2, sticky=tk.NSEW)
-        keys.update({str("="):button})
+        keys.update({str("Return"):button})
 
     def create_buttons_frame(self):
         frame = tk.Frame(self.window)
