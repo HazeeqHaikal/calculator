@@ -137,7 +137,8 @@ class Calculator:
             button.grid(row=grid_value[0],column=grid_value[1], sticky=tk.NSEW)
             
     def append_operator(self, operator):
-        if(str(self.current_expression) == "0"): 
+        
+        if str(self.current_expression) == "0": 
             self.current_expression = "0"
         self.current_expression += " " + operator + " "
         arguments = self.current_expression.split(" ")
