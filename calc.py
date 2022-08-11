@@ -48,17 +48,20 @@ class Calculator:
         self.create_operator_buttons()
         self.create_special_buttons()
     
-    # global key_release
-    def key_release(self, event):
-        if event.keysym =="Return" :
-            keys["Return"].config(bg=LIGHT_BLUE)
-        elif event.keysym in keys:
-            keys[event.keysym].config(bg=WHITE)
-                
     # global key_press
     def key_press(self, event):
         if event.keysym in keys:
             keys[event.keysym].config(bg=LIGHT_GRAY)
+                
+    # global key_release
+    def key_release(self, event):
+        operations = ["plus", "minus", "slash", "asterisk"]
+        if event.keysym =="Return" :
+            keys["Return"].config(bg=LIGHT_BLUE)
+        elif event.keysym in operations:
+            keys[event.keysym].config(bg=OFF_WHITE)
+        elif event.keysym in keys:
+            keys[event.keysym].config(bg=WHITE)
 
     def bind_keys(self):
         self.window.bind_all("<KeyPress>", self.key_press)
@@ -151,6 +154,9 @@ class Calculator:
             button = tk.Button(self.buttons_frame, text=symbol, bg=OFF_WHITE, fg=LABEL_COLOR,
                             font=DEFAULT_FONT_STYLE, borderwidth=0, command=lambda x=operator: self.append_operator(x))
             # if(i == 0):
+            # operations = ["KP_Add", "KP_Divide", "KP_Multiply", "KP_Subtract"]
+            symbol = symbol.replace("+", "plus").replace("\u00F7", "slash").replace("\u00D7", "asterisk").replace("-", "minus")
+            keys.update({str(symbol):button})
             button.grid(row=i, column=4, columnspan=1, sticky=tk.NSEW)
             # else:
                 # button.grid(row=i, column=4, columnspan=2, sticky=tk.NSEW)
