@@ -172,6 +172,7 @@ class Calculator:
         button = tk.Button(self.buttons_frame, text="C", bg=OFF_WHITE, fg=LABEL_COLOR,
                            font=DEFAULT_FONT_STYLE, borderwidth=0, command=lambda: self.clear())
         button.grid(row=0, column=1, sticky=tk.NSEW)
+        keys.update({"Delete":button})
     
     def fraction(self):
         if(self.current_expression == ""): self.total_expression = "0"
