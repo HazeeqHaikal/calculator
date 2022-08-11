@@ -1,9 +1,6 @@
-from ast import arguments
 import tkinter as tk
 import math
 from fractions import Fraction as frac
-import locale
-locale.setlocale(locale.LC_ALL, '')
 
 LARGE_FONT_STYLE = ("Arial", 40, "bold")
 SMALL_FONT_STYLE = ("Arial", 16)
@@ -14,8 +11,8 @@ DIGITS_FONT_STYLE = ("Arial", 24, "bold")
 DEFAULT_FONT_STYLE = ("Arial", 20)
 OFF_WHITE = "#F8FAFF"
 LIGHT_BLUE = "#CCEDFF"
-
-
+global keys
+keys = {}
 class Calculator:
     def __init__(self):
         self.window = tk.Tk()
@@ -43,23 +40,36 @@ class Calculator:
         self.buttons_frame.rowconfigure(0, weight=1)
 
         for x in range(1, 5):
-            # if(x < 5):
             self.buttons_frame.rowconfigure(x, weight=1)
             self.buttons_frame.columnconfigure(x, weight=1)
 
+        self.bind_keys()
         self.create_digit_buttons()
         self.create_operator_buttons()
         self.create_special_buttons()
-        self.bind_keys()
-        
+    
+    # global key_release
+    def key_release(self, event):
+        if event.keysym in keys:
+            print("lmao")
+            keys[event.keysym].config(bg=WHITE)
+                
+    # global key_press
+    def key_press(self, event):
+        if event.keysym in keys:
+            keys[event.keysym].config(bg=LIGHT_GRAY)
+
     def bind_keys(self):
-        
+        self.window.bind_all("<KeyPress>", self.key_press)
+        self.window.bind_all("<KeyRelease>", self.key_release)
         self.window.bind("<Return>", lambda event:self.evaluate())
         self.window.bind("<Delete>", lambda event:self.clear())
         self.window.bind("<BackSpace>", lambda event:self.backspace())
         # self.window.bind("<Delete>", lambda event:self.delete())
-        for key in  self.digits:
+        
+        for key in self.digits:
             self.window.bind(str(key), lambda event, digit = key: self.add_to_expression(digit))
+
         
         for key in self.operators:
             self.window.bind(key, lambda event, operator=key:self.append_operator(operator))
@@ -114,11 +124,11 @@ class Calculator:
             self.current_expression += str(value)
         self.update_label()
         
-    def create_digit_buttons(self):        
+    def create_digit_buttons(self):      
         for digit, grid_value in self.digits.items():
             button = tk.Button(self.buttons_frame, text=str(digit), bg=WHITE, fg=LABEL_COLOR,
                                font=DIGITS_FONT_STYLE, borderwidth=0, command=lambda x=digit: self.add_to_expression(x))
-                        
+            keys.update({str(digit):button})
             button.grid(row=grid_value[0],column=grid_value[1], sticky=tk.NSEW)
             
     def append_operator(self, operator):
@@ -189,6 +199,9 @@ class Calculator:
         button.grid(row=0, column=3, sticky=tk.NSEW)
 
     def evaluate(self):
+        self.key_press
+        self.key_release
+        
         self.total_expression += self.current_expression
         self.update_total_label()
 
@@ -204,6 +217,7 @@ class Calculator:
         button = tk.Button(self.buttons_frame, text="=", bg=LIGHT_BLUE,
                            fg=LABEL_COLOR, font=DEFAULT_FONT_STYLE, borderwidth=0, command=self.evaluate)
         button.grid(row=4, column=3, columnspan=2, sticky=tk.NSEW)
+        keys.update({str("="):button})
 
     def create_buttons_frame(self):
         frame = tk.Frame(self.window)
@@ -220,28 +234,11 @@ class Calculator:
     def update_label(self):
         # self.label.config(text=locale.format_string("%d",  int(self.current_expression[:11]), grouping=True))
         self.label.config(text=self.current_expression[:11])
-        
-    # def update_button(self):
-    #     self.label.config
-    
-    # def select_button(widget):
-    #     global previously_clicked
-
-    #     if previously_clicked:
-    #         previously_clicked['bg'] = widget['bg']
-    #         previously_clicked['activebackground'] = widget['activebackground']
-    #         previously_clicked['relief'] = widget['relief']
-
-    #     widget['bg'] = OFF_WHITE
-    #     widget['activebackground'] = LIGHT_GRAY
-    #     widget['relief'] = 'sunken'
-
-    #     previously_clicked = widget
     
     def run(self):
         self.window.mainloop()
 
-    
+
 if __name__ == '__main__':
     calc = Calculator()
     calc.run()
