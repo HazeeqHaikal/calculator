@@ -50,7 +50,6 @@ class Calculator:
     
     # global key_press
     def key_press(self, event):
-        print(event.keysym)
         if event.keysym in keys:
             keys[event.keysym].config(bg=LIGHT_GRAY)
                 
