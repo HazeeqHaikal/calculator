@@ -50,6 +50,7 @@ class Calculator:
     
     # global key_press
     def key_press(self, event):
+        print(event.keysym)
         if event.keysym in keys:
             keys[event.keysym].config(bg=LIGHT_GRAY)
                 
@@ -132,6 +133,7 @@ class Calculator:
         for digit, grid_value in self.digits.items():
             button = tk.Button(self.buttons_frame, text=str(digit), bg=WHITE, fg=LABEL_COLOR,
                                font=DIGITS_FONT_STYLE, borderwidth=0, command=lambda x=digit: self.add_to_expression(x))
+            digit = str(digit).replace(".", "period")
             keys.update({str(digit):button})
             button.grid(row=grid_value[0],column=grid_value[1], sticky=tk.NSEW)
             
